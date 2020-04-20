@@ -1,16 +1,29 @@
-﻿using MeetingsOrganizer.Models;
+﻿using MeetingsOrganizer.Data;
+using MeetingsOrganizer.Models;
+using System;
 using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Threading.Tasks;
+
 namespace MeetingsOrganizer.UI.DataServices
 {
     public class FriendDataService : IFriendDataService
     {
-        public IEnumerable<Friend> GetAll()
+        private readonly Func<MeetingsOrganizerDbContext> context;
+
+        public FriendDataService(Func<MeetingsOrganizerDbContext> context)
         {
-            yield return new Friend { FirstName = "Peter", LastName = "Pan" };
-            yield return new Friend { FirstName = "Vivian", LastName = "Shields" };
-            yield return new Friend { FirstName = "Japan", LastName = "Lasters" };
-            yield return new Friend { FirstName = "Varna", LastName = "Livierung" };
-            yield return new Friend { FirstName = "Liver", LastName = "Anderson" };
+            this.context = context;
+        }
+
+        public async Task<List<Friend>> GetAllAsync()
+        {
+            using (var ctx = context())
+            {
+                return await ctx.Friends.ToListAsync(); //TODO await the ToListAsync() 
+                                                        //so the ctx will not be disposed
+            }                                           // BEFORE the methods returns !
         }
     }
 }

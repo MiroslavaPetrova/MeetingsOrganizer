@@ -2,6 +2,7 @@
 using MeetingsOrganizer.UI.DataServices;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 
 namespace MeetingsOrganizer.UI.ViewModels
 {
@@ -18,9 +19,9 @@ namespace MeetingsOrganizer.UI.ViewModels
 
         public ObservableCollection<Friend> Friends { get; set; }
 
-        public void Load()
+        public async Task LoadAsync()
         {
-            IEnumerable<Friend> allFriends = friendService.GetAll();
+            IEnumerable<Friend> allFriends = await friendService.GetAllAsync();
             Friends.Clear();    // so I wont have duplicates when reloading the friends
 
             foreach (var friend in allFriends)
