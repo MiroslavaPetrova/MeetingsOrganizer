@@ -1,8 +1,8 @@
-﻿using MeetingsOrganizer.Models;
-using MeetingsOrganizer.UI.DataServices;
+﻿using MeetingsOrganizer.UI.DataServices;
 using MeetingsOrganizer.UI.Events;
 using Prism.Events;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MeetingsOrganizer.UI.ViewModels
@@ -17,7 +17,14 @@ namespace MeetingsOrganizer.UI.ViewModels
         {
             this.friendLookupService = friendLookupService;
             this.eventAggregator = eventAggregator;
-            this.Friends = new ObservableCollection<LookupItem>();
+            this.Friends = new ObservableCollection<NavigationItemViewModel>();
+            this.eventAggregator.GetEvent<AfterFriendSavedEvent>().Subscribe(AfterFriendSaved);
+        }
+
+        private void AfterFriendSaved(AfterFriendSavedEventArgs frinedArgs)
+        {
+            var lookupItem = this.Friends.Single(item => item.Id == frinedArgs.Id);
+            lookupItem.DisplayMember = frinedArgs.DisplayMember;
         }
 
         public async Task LoadAsync()
@@ -27,15 +34,15 @@ namespace MeetingsOrganizer.UI.ViewModels
 
             foreach (var item in lookups)
             {
-                Friends.Add(item);
+                Friends.Add(new NavigationItemViewModel(item.Id, item.DisplayMember));
             }
         }
 
-        public ObservableCollection<LookupItem> Friends { get; set; }
+        public ObservableCollection<NavigationItemViewModel> Friends { get; set; }
 
-        private LookupItem selectedFriend;
+        private NavigationItemViewModel selectedFriend;
 
-        public LookupItem SelectedFriend
+        public NavigationItemViewModel SelectedFriend
         {
             get { return this.selectedFriend; }
             set

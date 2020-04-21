@@ -6,5 +6,7 @@ namespace MeetingsOrganizer.UI.DataServices
     public interface IFriendDataService
     {
         Task<Friend> GetByIdAsync(int friendId);
+
+        Task SaveAync(Friend friend);
     }
 }

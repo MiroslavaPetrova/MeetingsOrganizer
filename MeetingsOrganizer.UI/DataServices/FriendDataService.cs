@@ -1,9 +1,7 @@
 ﻿using MeetingsOrganizer.Data;
 using MeetingsOrganizer.Models;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace MeetingsOrganizer.UI.DataServices
@@ -25,6 +23,16 @@ namespace MeetingsOrganizer.UI.DataServices
                                                          //TODO await the ToListAsync() 
                                                         //so the ctx will not be disposed
             }                                           // BEFORE the methods returns !
+        }
+
+        public async Task SaveAync(Friend friend)
+        {
+            using (var ctx = context())
+            {
+                ctx.Friends.Attach(friend);
+                ctx.Entry(friend).State = EntityState.Modified;
+                await ctx.SaveChangesAsync();
+            }
         }
     }
 }

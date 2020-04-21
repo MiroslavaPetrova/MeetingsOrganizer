@@ -1,9 +1,10 @@
 ﻿using MeetingsOrganizer.Models;
 using MeetingsOrganizer.UI.DataServices;
 using MeetingsOrganizer.UI.Events;
+using Prism.Commands;
 using Prism.Events;
-using System;
 using System.Threading.Tasks;
+using System.Windows.Input;
 
 namespace MeetingsOrganizer.UI.ViewModels
 {
@@ -19,6 +20,23 @@ namespace MeetingsOrganizer.UI.ViewModels
             this.eventAggregator = eventAggregator;
             this.eventAggregator.GetEvent<OpenUpFriendDetailsViewEvent>()
                 .Subscribe(OnOpenFriendDetailsView);
+            this.SaveCommand = new DelegateCommand(OnSaveExecute, OnSaveCanExecute);
+        }
+
+        private async void OnSaveExecute()
+        {
+            await this.friendDataService.SaveAync(friend);
+            this.eventAggregator.GetEvent<AfterFriendSavedEvent>()
+                .Publish(new AfterFriendSavedEventArgs
+                {
+                    Id = this.Friend.Id,
+                    DisplayMember = $"{this.Friend.FirstName} {this.Friend.LastName}"
+                });
+        }
+
+        private bool OnSaveCanExecute()
+        {
+            return true;
         }
 
         private async void OnOpenFriendDetailsView(int friendId)
@@ -42,5 +60,7 @@ namespace MeetingsOrganizer.UI.ViewModels
                 OnPropertyChanged();
             }
         }
+
+        public ICommand SaveCommand { get; }
     }
 }
