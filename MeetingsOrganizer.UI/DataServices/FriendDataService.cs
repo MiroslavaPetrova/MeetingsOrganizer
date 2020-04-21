@@ -17,11 +17,12 @@ namespace MeetingsOrganizer.UI.DataServices
             this.context = context;
         }
 
-        public async Task<List<Friend>> GetAllAsync()
+        public async Task<Friend> GetByIdAsync(int friendId)
         {
             using (var ctx = context())
             {
-                return await ctx.Friends.ToListAsync(); //TODO await the ToListAsync() 
+                return await ctx.Friends.SingleOrDefaultAsync(f => f.Id == friendId);
+                                                         //TODO await the ToListAsync() 
                                                         //so the ctx will not be disposed
             }                                           // BEFORE the methods returns !
         }

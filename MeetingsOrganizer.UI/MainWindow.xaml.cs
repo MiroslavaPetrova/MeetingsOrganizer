@@ -10,7 +10,7 @@ namespace MeetingsOrganizer.UI
         public MainWindow(MainViewModel model)
         {
             InitializeComponent();
-            viewModel = model;
+            this.viewModel = model;
             DataContext = viewModel;
             Loaded += MainWindow_Loaded;
         }

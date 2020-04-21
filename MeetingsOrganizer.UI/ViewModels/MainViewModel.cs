@@ -1,44 +1,25 @@
-﻿using MeetingsOrganizer.Models;
-using MeetingsOrganizer.UI.DataServices;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace MeetingsOrganizer.UI.ViewModels
 {
     public partial class MainViewModel : BaseNotifyPropertyChangedModel
     {
-        private IFriendDataService friendService;
-        private Friend selectedFriend;
+        //private readonly INavigationViewModel navigationViewModel;
 
-        public MainViewModel(IFriendDataService friendDataService)
+        public MainViewModel(INavigationViewModel navigationViewModel,
+            IFriendDetailsViewModel friendDetailsViewModel)
         {
-            this.Friends = new ObservableCollection<Friend>();
-            this.friendService = friendDataService;
+            this.NavigationViewModel = navigationViewModel;
+            this.FriendDetailsViewModel = friendDetailsViewModel;
         }
 
-        public ObservableCollection<Friend> Friends { get; set; }
+        public INavigationViewModel NavigationViewModel { get; }
+
+        public IFriendDetailsViewModel FriendDetailsViewModel { get; }
 
         public async Task LoadAsync()
         {
-            IEnumerable<Friend> allFriends = await friendService.GetAllAsync();
-            Friends.Clear();    // so I wont have duplicates when reloading the friends
-
-            foreach (var friend in allFriends)
-            {
-                Friends.Add(friend);
-            }
-        }
-
-        public Friend SelectedFriend
-        {
-            get { return selectedFriend; }
-            set
-            {
-                selectedFriend = value;
-                OnPropertyChanged(); 
-                //passes the member name/e.g. selectedFriend/ of the caller at runtime
-            }
+            await this.NavigationViewModel.LoadAsync();
         }
     }
 }
